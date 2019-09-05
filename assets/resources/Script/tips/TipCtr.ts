@@ -9,13 +9,17 @@ export  class TipCtr extends cc.Component {
     @property
     text: string = 'hello';
 
-    // LIFE-CYCLE CALLBACKS:
 
     // onLoad () {}
 
     start () {
 
     }
+
+    onDestroySelf() {
+        this.node.removeFromParent();
+    }
+
     showContent (str:string) {
         if (str) {
             this.content.string = str;
