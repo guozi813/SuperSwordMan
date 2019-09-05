@@ -18,6 +18,8 @@ export default class LoadingView extends BaseUI {
     loadIcon:cc.Node = null;
     @property(cc.Label)
     loadLabel:cc.Label = null;
+    @property(cc.ProgressBar)
+    progressBar:cc.ProgressBar = null;
     @property(Number)
     rotationSpeed:number = 1;
     private _type:number = 1;
@@ -48,6 +50,7 @@ export default class LoadingView extends BaseUI {
         // cc.log("当前加载进度：" + completedCount + "/" + totalCount);
         let percent = Math.round(completedCount/totalCount * 100);
         this.loadLabel.string = percent + "%";
+        this.progressBar.progress = percent/100;
     }
     update(dt) {
         this.loadIcon.angle -= this.rotationSpeed + dt;
