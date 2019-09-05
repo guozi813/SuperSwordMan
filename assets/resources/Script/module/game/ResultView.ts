@@ -59,7 +59,7 @@ export default class ResultView extends BaseUI {
     private getRewardBtnHandler() {
         // 添加金币
         GameManager.getInstance().addAward(1, PlayerManager.getInstance().coin);
-        // console.log("goldNum:",GameManager.getInstance().gameData.coin);
+        // LogWrap.log("goldNum:",GameManager.getInstance().gameData.coin);
 
         UIManager.getInstance().closeUI(ResultView);
         this.nextLevel();
@@ -68,7 +68,7 @@ export default class ResultView extends BaseUI {
     private getADRewardBtnHandler() {
         // TODO 添加金币 倍数？
         GameManager.getInstance().addAward(1, PlayerManager.getInstance().coin * this.multiple);
-        // console.log("ad goldNum:",GameManager.getInstance().gameData.coin);
+        // LogWrap.log("ad goldNum:",GameManager.getInstance().gameData.coin);
         this.nextLevel();
     }
 
@@ -79,7 +79,7 @@ export default class ResultView extends BaseUI {
         node.parent = this.node.getParent().getChildByName("playerNode");
         // player.refreshPlayerData();
         // this.player.node.active = true;
-        // console.log("resultView parent",this.node.getParent());
+        // LogWrap.log("resultView parent",this.node.getParent());
         this.node.getParent().getChildByName("ObstacleNode").removeAllChildren();
         this.node.getParent().getChildByName("enemyNode").removeAllChildren();
         this.node.getParent().getChildByName("bulletNode").removeAllChildren();

@@ -68,7 +68,7 @@ export default class JoyStickBG extends cc.Component {
 
     private _touchEndEvent(event) {
         PlayerManager.getInstance().isMove = false;
-        // console.log("touchEnd isMove",PlayerManager.getInstance().isMove);
+        // LogWrap.log("touchEnd isMove",PlayerManager.getInstance().isMove);
         this.dot.node.setPosition(this.node.getPosition());
         this._speed = 0;
     }
@@ -92,6 +92,7 @@ export default class JoyStickBG extends cc.Component {
         var pos = this.node.getPosition();
         this._angle = Math.atan2(point.y - pos.y, point.x - pos.x) * (180 / Math.PI);
         PlayerManager.getInstance().angle = this._angle;
+        // TODO 只四个方向移动
         return this._angle;
     }
 
@@ -112,6 +113,7 @@ export default class JoyStickBG extends cc.Component {
 
     private _allDirectionsMove() {
         this.player.node.x += Math.cos(this._angle * (Math.PI / 180)) * this._speed * PlayerManager.getInstance().reduceSpeed * PlayerManager.getInstance().controlX;
+        // 控制角色不要超过场景边界
         if (this.player.node.x < -this._width / 2+this.player.node.width/2) {
             this.player.node.x = -this._width / 2+this.player.node.width/2;
         } else if (this.player.node.x > (this._width / 2 - this.player.node.width/2-32)) {
