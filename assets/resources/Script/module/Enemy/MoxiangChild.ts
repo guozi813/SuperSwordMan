@@ -10,6 +10,7 @@ import {GameManager} from "../../manager/GameManager";
 import {GameUtil} from "../../manager/GameUtil";
 import {AudioManager} from "../../manager/AudioManager";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 
 const {ccclass, property} = cc._decorator;
@@ -39,7 +40,7 @@ export default class MoxiangChild extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -61,7 +62,7 @@ export default class MoxiangChild extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed * (effectNum1 / 100);
                 break;
             case "3":
@@ -77,7 +78,7 @@ export default class MoxiangChild extends EnemyBaseClass {
                     this.isFire = false;
                     let anim = this.node.getComponent(cc.Animation);
                     let animState = anim.play("missingClip2");
-                    console.log("animState", animState);
+                    LogWrap.log("animState", animState);
                     let posArr = animState.curves[0].values;
                     for (let i = 0; i < posArr.length; i++) {
                         if (i <= 1) {
@@ -91,7 +92,7 @@ export default class MoxiangChild extends EnemyBaseClass {
                         this.isFire = true;
                     }.bind(this), this);
                 } else {
-                    console.log("isFire", this.isFire);
+                    LogWrap.log("isFire", this.isFire);
                 }
                 break;
             case "4":
@@ -135,7 +136,7 @@ export default class MoxiangChild extends EnemyBaseClass {
         this.unschedule(this.callback);
         // self.unscheduleAllCallbacks();
         this.schedule(this.callback,interval);
-        console.log( cc.director.getScheduler().isScheduled(this.callback,this) )
+        LogWrap.log( cc.director.getScheduler().isScheduled(this.callback,this) )
     }
     count = 0;
     private callback(){
@@ -151,7 +152,7 @@ export default class MoxiangChild extends EnemyBaseClass {
 
     private changeMoveState() {
         if (!this.isMove) {
-            console.log("恢复移动....");
+            LogWrap.log("恢复移动....");
             this.isMove = true;
         }
     }
@@ -167,10 +168,10 @@ export default class MoxiangChild extends EnemyBaseClass {
 
     public isDead(curHp) {
         if (curHp <= 0) {
-            console.log("击杀魔像小怪", PlayerManager.getInstance().coin);
+            LogWrap.log("击杀魔像小怪", PlayerManager.getInstance().coin);
             let num = Math.floor(GameUtil.randomNumByRange(100, 200) / 2);
             PlayerManager.getInstance().coin += num;
-            console.log("num:%d,coin:%d", num, PlayerManager.getInstance().coin);
+            LogWrap.log("num:%d,coin:%d", num, PlayerManager.getInstance().coin);
             this.node.removeFromParent(true);
         }
     }
@@ -184,11 +185,11 @@ export default class MoxiangChild extends EnemyBaseClass {
                 if (swordData.id == 6 && num <= rate) {
                     let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer, 1).value;
                     this.curHp -= this.aggressivity + (this.aggressivity * (crit / 100));
-                    console.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
+                    LogWrap.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
                 } else {
                     if (swordData.id == 5) {
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
-                        console.log("子剑攻击力", this.aggressivity);
+                        LogWrap.log("子剑攻击力", this.aggressivity);
                     }
                     this.curHp -= this.aggressivity;
                     if (this.curHp < 0) {

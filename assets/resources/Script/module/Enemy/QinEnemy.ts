@@ -11,6 +11,7 @@ import {SwordConfigContainer} from "../../Configs/SwordConfigContainer";
 import {AudioManager} from "../../manager/AudioManager";
 import EnemyBaseClass from "./EnemyBaseClass";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 /**
  * creator: yisha
@@ -50,7 +51,7 @@ export class QinEnemy extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -108,7 +109,7 @@ export class QinEnemy extends EnemyBaseClass {
                 if (swordData.id == 6 && num <= rate) {
                     let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer, 1).value;
                     this.curHp -= this.aggressivity + (this.aggressivity * (crit / 100));
-                    console.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
+                    LogWrap.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
                 } else {
                     if (swordData.id == 5) {
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
@@ -208,7 +209,7 @@ export class QinEnemy extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed * (effectNum1 / 100);
                 break;
             case "3":
@@ -223,7 +224,7 @@ export class QinEnemy extends EnemyBaseClass {
                     this.isFire = false;
                     let anim = this.node.getComponent(cc.Animation);
                     let animState = anim.play("missingClip");
-                    console.log("animState", animState);
+                    LogWrap.log("animState", animState);
                     let posArr = animState.curves[0].values;
                     for (let i = 0; i < posArr.length; i++) {
                         if (i <= 1) {
@@ -237,7 +238,7 @@ export class QinEnemy extends EnemyBaseClass {
                         this.isFire = true;
                     }.bind(this), this);
                 } else {
-                    console.log("isFire", this.isFire);
+                    LogWrap.log("isFire", this.isFire);
                 }
                 break;
             case "4":
@@ -281,7 +282,7 @@ export class QinEnemy extends EnemyBaseClass {
         this.unschedule(this.callback);
         // self.unscheduleAllCallbacks();
         this.schedule(this.callback,interval);
-        console.log( cc.director.getScheduler().isScheduled(this.callback,this) )
+        LogWrap.log( cc.director.getScheduler().isScheduled(this.callback,this) )
     }
     count = 0;
     private callback(){

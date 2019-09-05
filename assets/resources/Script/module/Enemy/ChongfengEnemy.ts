@@ -9,6 +9,7 @@ import {LevelConfigContainer} from "../../Configs/LevelConfigContainer";
 import {SwordConfigContainer} from "../../Configs/SwordConfigContainer";
 import EnemyBaseClass from "./EnemyBaseClass";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 
 const {ccclass, property} = cc._decorator;
@@ -45,7 +46,7 @@ export default class ChongfengEnemy extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -68,13 +69,13 @@ export default class ChongfengEnemy extends EnemyBaseClass {
                 if (swordData.id == 6 && num <= rate) {
                     let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer, 1).value;
                     this.curHp -= this.aggressivity + (this.aggressivity * (crit / 100));
-                    console.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
+                    LogWrap.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
                     this.refreshBloodBar(this.blood, this.curHp, this.bloodBar);
                     this.playAttackedAnim();
                 } else {
                     if (swordData.id == 5) {
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
-                        console.log("子剑攻击力", this.aggressivity);
+                        LogWrap.log("子剑攻击力", this.aggressivity);
                     }
                     this.curHp -= this.aggressivity;
                     if (this.curHp < 0) {
@@ -175,8 +176,8 @@ export default class ChongfengEnemy extends EnemyBaseClass {
                     pos.y = wall.height / 2 + wall.y - this.node.height / 2;
                 }
             }
-            // console.log("position",EnemyManager.getInstance().playerNode.position);
-            // console.log("position",pos);
+            // LogWrap.log("position",EnemyManager.getInstance().playerNode.position);
+            // LogWrap.log("position",pos);
             this.node.runAction(cc.sequence(cc.moveTo(1, pos), cc.callFunc(function () {
                 this.isMove = true;
             }.bind(this))));
@@ -203,7 +204,7 @@ export default class ChongfengEnemy extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed * (effectNum1 / 100);
                 break;
             case "3":
@@ -219,7 +220,7 @@ export default class ChongfengEnemy extends EnemyBaseClass {
                     this.isFire = false;
                     let anim = this.node.getComponent(cc.Animation);
                     let animState = anim.play("missingClip2");
-                    console.log("anim.curveData", animState.curves[0]);
+                    LogWrap.log("anim.curveData", animState.curves[0]);
                     let posArr = animState.curves[0].values;
                     for (let i = 0; i < posArr.length; i++) {
                         if (i <= 1) {
@@ -233,7 +234,7 @@ export default class ChongfengEnemy extends EnemyBaseClass {
                         this.isFire = true;
                     }.bind(this), this);
                 } else {
-                    console.log("isFire", this.isFire);
+                    LogWrap.log("isFire", this.isFire);
                 }
                 break;
             case "4":
@@ -280,7 +281,7 @@ export default class ChongfengEnemy extends EnemyBaseClass {
         this.unschedule(this.callback);
         // self.unscheduleAllCallbacks();
         this.schedule(this.callback,interval);
-        console.log( cc.director.getScheduler().isScheduled(this.callback,this) )
+        LogWrap.log( cc.director.getScheduler().isScheduled(this.callback,this) )
     }
     count = 0;
     private callback(){

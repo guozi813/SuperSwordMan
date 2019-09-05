@@ -8,6 +8,7 @@ import {PlayerManager} from "../../manager/PlayerManager";
 import {EnemyManager} from "../../manager/EnemyManager";
 import EnemyBaseClass from "./EnemyBaseClass";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 /**
  * creator: yisha
@@ -36,7 +37,7 @@ export class FlameTower extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -58,11 +59,11 @@ export class FlameTower extends EnemyBaseClass {
                 if(swordData.id == 6 && num<=rate){
                         let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer,1).value;
                         this.curHp -= this.aggressivity+(this.aggressivity*(crit/100));
-                        console.log("暴击。。。",this.aggressivity+(this.aggressivity*(crit/100)));
+                        LogWrap.log("暴击。。。",this.aggressivity+(this.aggressivity*(crit/100)));
                 }else{
                     if(swordData.id == 5){
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
-                        console.log("子剑攻击力",this.aggressivity);
+                        LogWrap.log("子剑攻击力",this.aggressivity);
                     }
                     this.curHp -= this.aggressivity;
                     if(this.curHp<0){
@@ -102,7 +103,7 @@ export class FlameTower extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed*(effectNum1/100);
                 break;
             case "3":
@@ -146,7 +147,7 @@ export class FlameTower extends EnemyBaseClass {
                 let rate6 = Math.floor(Math.random()*100);
                 // let rate6 = 1;
                 let random6 = GameManager.getInstance().gameData.swordData[5].remarks;
-                console.log("眩晕  rate",rate6,"config",random6);
+                LogWrap.log("眩晕  rate",rate6,"config",random6);
                 if(rate6 < random6){
                     this.unschedule(this.changeMoveState);
                     this.isMove = false;
@@ -173,7 +174,7 @@ export class FlameTower extends EnemyBaseClass {
         this.unschedule(this.callback);
         // self.unscheduleAllCallbacks();
         this.schedule(this.callback,interval);
-        console.log( cc.director.getScheduler().isScheduled(this.callback,this) )
+        LogWrap.log( cc.director.getScheduler().isScheduled(this.callback,this) )
     }
     count = 0;
     private callback(){

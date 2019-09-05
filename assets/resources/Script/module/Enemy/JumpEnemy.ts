@@ -11,6 +11,7 @@ import {SwordConfigContainer} from "../../Configs/SwordConfigContainer";
 import log = cc.log;
 import EnemyBaseClass from "./EnemyBaseClass";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 
 const {ccclass, property} = cc._decorator;
@@ -49,7 +50,7 @@ export default class JumpEnemy extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -81,11 +82,11 @@ export default class JumpEnemy extends EnemyBaseClass {
                 if(swordData.id == 6 && num<=rate){
                         let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer,1).value;
                         this.curHp -= this.aggressivity+(this.aggressivity*(crit/100));
-                        console.log("暴击。。。",this.aggressivity+(this.aggressivity*(crit/100)));
+                        LogWrap.log("暴击。。。",this.aggressivity+(this.aggressivity*(crit/100)));
                 }else{
                     if(swordData.id == 5){
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
-                        console.log("子剑攻击力",this.aggressivity);
+                        LogWrap.log("子剑攻击力",this.aggressivity);
                     }
                     this.curHp -= this.aggressivity;
                     if(this.curHp<0){
@@ -158,7 +159,7 @@ export default class JumpEnemy extends EnemyBaseClass {
         if (this.curHp <= 0) {
             let num  =GameUtil.randomNumByRange(100,200);
             PlayerManager.getInstance().coin += num;
-            // console.log("num:%d,coin:%d",num,PlayerManager.getInstance().coin);
+            // LogWrap.log("num:%d,coin:%d",num,PlayerManager.getInstance().coin);
             clearInterval(this.tickId);
             clearInterval(this.tickId2);
             TipsManager.getInstance().removeTickId(this.tickId);
@@ -170,7 +171,7 @@ export default class JumpEnemy extends EnemyBaseClass {
 
     private jumpToPlayer(){
         if(this.isFire){
-            console.log("jump=======================");
+            LogWrap.log("jump=======================");
             this.isMove = false;
             let moveTo = cc.moveTo(1,EnemyManager.getInstance().playerNode.position);
             this.node.runAction(cc.sequence(moveTo,cc.callFunc(function () {
@@ -204,7 +205,7 @@ export default class JumpEnemy extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed*(effectNum1/100);
                 break;
             case "3":
@@ -219,7 +220,7 @@ export default class JumpEnemy extends EnemyBaseClass {
                     this.isMove = false;
                     this.isFire = false;
 
-                    console.log("animState",this.animState);
+                    LogWrap.log("animState",this.animState);
                     let posArr = this.animState.curves[0].values;
                     for(let i=0;i<posArr.length;i++){
                         if(i<=1){
@@ -275,7 +276,7 @@ export default class JumpEnemy extends EnemyBaseClass {
         this.unschedule(this.callback);
         // self.unscheduleAllCallbacks();
         this.schedule(this.callback,interval);
-        console.log( cc.director.getScheduler().isScheduled(this.callback,this) )
+        LogWrap.log( cc.director.getScheduler().isScheduled(this.callback,this) )
     }
     count = 0;
     private callback(){

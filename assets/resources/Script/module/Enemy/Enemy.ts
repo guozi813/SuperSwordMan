@@ -10,6 +10,7 @@ import Player from "../player/Player";
 import {SwordConfigContainer} from "../../Configs/SwordConfigContainer";
 import EnemyBaseClass, {EnemyClass} from "./EnemyBaseClass";
 import ConstConfigContainer from "../../Configs/ConstConfigContainer";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 
 const {ccclass, property} = cc._decorator;
@@ -39,7 +40,7 @@ export default class Enemy extends EnemyBaseClass {
     }
 
     public set curHp(value){
-        console.log("当前血量",value);
+        LogWrap.log("当前血量",value);
         this._curHp = value
     }
 
@@ -60,15 +61,15 @@ export default class Enemy extends EnemyBaseClass {
             if (self.tag == 300) {
                 let num = GameUtil.randomNum(100, false);
                 let rate = GameManager.getInstance().gameData.swordData[5].remarks;
-                console.log("随机%d,概率%d",num,rate);
+                LogWrap.log("随机%d,概率%d",num,rate);
                 if (swordData.id == 6 && num <= rate) {
                     let crit = ConfigManager.getInstance().getConfigById(ConstConfigContainer, 1).value;
                     this.curHp -= this.aggressivity + (this.aggressivity * (crit / 100));
-                    console.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
+                    LogWrap.log("暴击。。。", this.aggressivity + (this.aggressivity * (crit / 100)));
                 } else {
                     if (swordData.id == 5) {
                         this.initAggressivity(other.node.getComponent("Sword").isSplit);
-                        console.log("子剑攻击力", this.aggressivity);
+                        LogWrap.log("子剑攻击力", this.aggressivity);
                     }
                     this.curHp -= this.aggressivity;
                     if (this.curHp < 0) {
@@ -149,7 +150,7 @@ export default class Enemy extends EnemyBaseClass {
             case "2":
                 // 寒冰剑 减速
                 let effectNum1 = swordData.remarks;
-                // console.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
+                // LogWrap.log("被寒冰剑刺到。。。。。。。。。。",effectNum1);
                 this.speed -= this.speed * (effectNum1 / 100);
                 break;
             case "3":
@@ -161,12 +162,12 @@ export default class Enemy extends EnemyBaseClass {
                 // let rate = 2; // TODO 测试用
                 let percent = GameManager.getInstance().gameData.swordData[2].remarks;
                 if (rate < percent) {
-                    console.log("失去目标。。。。。。。。");
+                    LogWrap.log("失去目标。。。。。。。。");
                     this.speed = 0;
                     this.isFire = false;
                     let anim = this.node.getComponent(cc.Animation);
                     let animState = anim.play("missingClip2");
-                    console.log("animState", animState);
+                    LogWrap.log("animState", animState);
                     let posArr = animState.curves[0].values;
                     for (let i = 0; i < posArr.length; i++) {
                         if (i <= 1) {

@@ -4,6 +4,7 @@ import {ConfigManager} from "../../Configs/ConfigManager";
 import {LevelConfigContainer} from "../../Configs/LevelConfigContainer";
 import {GameManager} from "../../manager/GameManager";
 import {EnemyManager} from "../../manager/EnemyManager";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 /**
  * creator: yisha
@@ -41,7 +42,7 @@ export default class EnemyBaseClass extends cc.Component {
         if (curHp <= 0) {
             let num  =GameUtil.randomNumByRange(100,200);
             PlayerManager.getInstance().coin += num;
-            console.log("num:%d,coin:%d",num,PlayerManager.getInstance().coin);
+            LogWrap.log("num:%d,coin:%d",num,PlayerManager.getInstance().coin);
             this.node.removeFromParent(true);
         }
     }
