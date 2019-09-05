@@ -1,5 +1,8 @@
 import {BaseUI} from "../../UI/BaseUI";
 import {UIManager} from "../../UI/UIManager";
+import {ListenerManager} from "../../manager/listen/ListenManager";
+import {ListenerType} from "../../Data/Const";
+import {GameManager} from "../../manager/GameManager";
 
 
 const {ccclass, property} = cc._decorator;
@@ -11,12 +14,7 @@ export  class CoinView extends BaseUI {
     protected static pathName = "/ui/main/";
 
     @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
+    coin:cc.Label =null;
 
     // onLoad () {}
 

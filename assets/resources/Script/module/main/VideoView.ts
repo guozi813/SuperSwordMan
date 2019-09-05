@@ -1,5 +1,11 @@
 import {BaseUI} from "../../UI/BaseUI";
 import {UIManager} from "../../UI/UIManager";
+import {PlayerManager} from "../../manager/PlayerManager";
+import {PlaformManager} from "../../platform/PlatformManager";
+import {GameManager} from "../../manager/GameManager";
+import {TipsManager} from "../../manager/TipsManager";
+import {ConfigManager} from "../../Configs/ConfigManager";
+import ConstConfigContainer from "../../Configs/ConstConfigContainer";
 
 
 const {ccclass, property} = cc._decorator;
@@ -31,6 +37,16 @@ export  class VideoView extends BaseUI {
         bg.on("touchmove",this.closeUI,this);
     }
 
+    private addCoin(type){
+        if(type){
+            // TODO
+            let num = ConfigManager.getInstance().getConfigById(ConstConfigContainer,6).value;
+            GameManager.getInstance().addAward(1,num);
+        }else{
+            TipsManager.getInstance().showContent("视频未看完,无法获得奖励!");
+            return;
+        }
+    }
 
     closeUI(){
         UIManager.getInstance().closeUI(VideoView);

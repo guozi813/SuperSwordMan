@@ -36,6 +36,7 @@ export class Item extends cc.Component {
 
     public initView(): void {
         let id = GameManager.getInstance().gameData.isUse.id;
+        let maxSwordId = GameManager.getInstance().gameData.unlockSword[GameManager.getInstance().gameData.unlockSword.length-1].id;
         let tupian = this._data.image;
         this.title.string = this._data.name;
         if (this._data.id == id) {
@@ -53,6 +54,10 @@ export class Item extends cc.Component {
         }
         this.node.getChildByName("bg").active = false;
         this.node.getChildByName("unlockLevel").active = false;
+        if(this._data.id > maxSwordId){
+            GameManager.getInstance().gameData.unlockSword.push(this._data);
+            GameManager.getInstance().saveData();
+        }
         this._data.state = true;
     }
 
@@ -65,7 +70,7 @@ export class Item extends cc.Component {
         AudioManager.getInstance().btnOnClick();
 
         if (!this._data.state) {
-            TipsManager.getInstance().showTip("未解锁");
+            TipsManager.getInstance().showContent("未解锁");
             return;
         }
         // let swordData:any = GameManager.getInstance().gameData.swordData;

@@ -5,6 +5,8 @@ import {GameManager} from "../../manager/GameManager";
 import {ConfigManager} from "../../Configs/ConfigManager";
 import {RoleConfigContainer} from "../../Configs/RoleConfigContainer";
 import {GameUtil} from "../../manager/GameUtil";
+import {TipsManager} from "../../manager/TipsManager";
+import {LogWrap} from "../../manager/utils/LogWrap";
 
 
 const {ccclass, property} = cc._decorator;
@@ -41,7 +43,14 @@ export default class RoleUpdateView extends cc.Component {
             GameManager.getInstance().saveData();
         }
         let level = ConfigManager.getInstance().getConfigById(RoleConfigContainer,role.level);
-        console.log("level",level);
+        LogWrap.log("level",level);
+
+        if(role.cost > GameManager.getInstance().gameData.coin){
+            TipsManager.getInstance().showContent("金币不足");
+            return;
+        }
+
+        GameManager.getInstance().addAward(1,-role.cost);
         role.cost = GameUtil.levelUp(role.cost,250);
         role.hp = level.hp;
         role.aggressivity = level.aggressivity;
