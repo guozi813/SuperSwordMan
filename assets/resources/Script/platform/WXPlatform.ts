@@ -7,6 +7,11 @@ import {BasePlatform} from "./BasePlatform";
 const {ccclass, property} = cc._decorator;
 
 import game = cc.game;
+import {GameManager} from "../manager/GameManager";
+import Player from "../module/player/Player";
+import {PlayerManager} from "../manager/PlayerManager";
+import {LogWrap} from "../manager/utils/LogWrap";
+import {AudioManager} from "../manager/AudioManager";
 
 @ccclass
 export class WXPlatform extends BasePlatform{
@@ -17,6 +22,7 @@ export class WXPlatform extends BasePlatform{
     public bannerWidth = 300;
     public static seeVideoCall:Function = null;//看视频回调
     private static GameClubButton:any;
+    private _db:any = null; // 数据库
     init() {
 
     }
@@ -55,7 +61,8 @@ export class WXPlatform extends BasePlatform{
             .then(() => {
                 self._videoAd = videoAd;
                 videoAd.show();
-            }).catch(err => console.log(err.errMsg)
+            }).catch(err => {
+                LogWrap.log(err.errMsg);}
         );
         videoAd.onClose(res => {
             // 用户点击了【关闭广告】按钮
@@ -72,7 +79,7 @@ export class WXPlatform extends BasePlatform{
                 }
             }
         });
-        // this._videoAd = videoAd;
+       // TODO onLoad和onError监听能不能成功拉取广告
     }
 
     /**
@@ -120,8 +127,8 @@ export class WXPlatform extends BasePlatform{
 
 
         // this._bannerAd.onresize(res=>{
-        //     // console.log(res.width, res.height);
-        //     // console.log(this._bannerAd.style.realWidth, this._bannerAd.style.realHeight)
+        //     // LogWrap.log(res.width, res.height);
+        //     // LogWrap.log(this._bannerAd.style.realWidth, this._bannerAd.style.realHeight)
         // })
     }
 
@@ -229,7 +236,7 @@ export class WXPlatform extends BasePlatform{
      */
     public onShareAppMessage(title:string,imageUrl:string,imageUrlId:string):void {
         if (CC_WECHATGAME) {
-            // console.log("WXPlatform 被动转发");
+            // LogWrap.log("WXPlatform 被动转发");
             window["wx"].onShareAppMessage(() => ({
                 title: title,
                 imageUrl: imageUrl, // 图片 URL
@@ -355,7 +362,7 @@ export class WXPlatform extends BasePlatform{
             let windowSize = window["wx"].getSystemInfoSync();
             let menuTop = menuPos.top;
             let menuLeft = windowSize.windowWidth -30-18; // 因为clubButton的锚点在左上角 减去宽度再减去18与主场景的rightNode右对齐
-            // console.log("leftPos:",menuLeft,"topPos:",menuTop);
+            // LogWrap.log("leftPos:",menuLeft,"topPos:",menuTop);
             this.GameClubButton = window["wx"].createGameClubButton({
                 icon: 'light',
                 style: {
@@ -398,10 +405,10 @@ export class WXPlatform extends BasePlatform{
             window["wx"].setUserCloudStorage({
                 KVDataList: [{key: key, value: value}],
                 success: function (args) {
-                    console.log("setUserCloudStorage success: ", args);
+                    LogWrap.log("setUserCloudStorage success: ", args);
                 },
                 fail: function (args) {
-                    console.log("setUserCloudStorage fail: ", args);
+                    LogWrap.log("setUserCloudStorage fail: ", args);
                 }
             });
         }
@@ -469,4 +476,110 @@ export class WXPlatform extends BasePlatform{
             window["wx"].onKeyboardConfirm(callback);
         }
     }
+
+    // 云数据库
+    /**
+     * 初始化云数据库
+     */
+    public initDatabase(){
+        if( CC_WECHATGAME ){
+            window["wx"].cloud.init({
+                traceUser:true,
+                env:'test-19qut'
+            });
+
+            this._db = window["wx"].cloud.database({
+                env:"test-19qut"
+            });
+        }
+    }
+
+    /**
+     * 获取用户openid
+     */
+    public getOpenId(fun:Function){
+        if(CC_WECHATGAME){
+            window["wx"].cloud.callFunction({
+                name:'getOpenId',
+                complete:function(res){
+                    console.log("getOpenId",res.result.openid);
+                    PlayerManager.getInstance().openId = res.result.openid;
+                    GameManager.getInstance().gameData.openId = res.result.openid;
+                    // GameManager.getInstance().saveData();
+                    fun(res);
+                }
+            });
+        }
+    }
+
+    /**
+     * 上传用户数据到数据库
+     */
+    public setUserInfo(openId){
+        LogWrap.log("=============openID",openId);
+        this._db.collection('userInfo').add({
+            data:{
+                _id:openId,
+                gameData:GameManager.getInstance().gameData,
+                description:"用户游戏数据"
+            },
+            success:function (res) {
+                LogWrap.log("存储用户游戏数据成功！",res);
+            }
+        })
+    }
+
+    /**
+     * 更新用户游戏数据
+     */
+    public updateUserInfo() {
+        this._db.collection('userInfo').doc(GameManager.getInstance().gameData.openId).update({
+            data:{
+                gameData: GameManager.getInstance().gameData
+            }
+        })
+    }
+
+    /**
+     * 上传邀请者信息
+     */
+    public setShareInfo(inviteOpenId){
+        this._db.collection('shareInfo').add({
+            data:{
+                _id:GameManager.getInstance().gameData.openId,
+                avatarUrl:GameManager.getInstance().gameData.avatarUrl,
+                nickName:GameManager.getInstance().gameData.nickName,
+                inviteOpenId:inviteOpenId
+            }
+        })
+    }
+
+    /**
+     * 获取邀请到的好友数据
+     */
+    public getInviteInfo(callback:Function){
+        // let openId = GameManager.getInstance().gameData.openId;
+        let openId = "123456"; // TODO 测试用
+        this._db.collection('shareInfo').where({
+            inviteOpenId:openId,
+        }).get({
+            success:function (res) {
+                console.log("-----------------------",res);
+                callback(res.data);
+            }
+        })
+    }
+
+    /**
+     * 短震动
+     */
+    public static vibrateShort(){
+        let isOpen = AudioManager.getInstance().isOpenVibrate;
+        console.log("isOpen",isOpen);
+        if(CC_WECHATGAME && isOpen ){
+            console.log("================================open");
+            window["wx"].vibrateShort();
+        }
+    }
+
 }

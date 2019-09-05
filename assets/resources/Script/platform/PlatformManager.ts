@@ -8,8 +8,8 @@ import {BasePlatform} from "./BasePlatform";
 
 export class plaformName {
     public static WX: string = "wx";
-    public static ANDROID_TAPTAP:string = "android-taptap";//taptap安卓平台
-    public static IOS_TAPTAP:string = "ios_taptap";//taptap苹果平台
+    public static ANDROID_TAPTAP: string = "android-taptap";//taptap安卓平台
+    public static IOS_TAPTAP: string = "ios_taptap";//taptap苹果平台
 }
 
 export class PlaformManager {
@@ -101,7 +101,7 @@ export class PlaformManager {
         if (imageUrl == null) {
             imageUrl = "https://mmocgame.qpic.cn/wechatgame/XKGicIWicBF9pOt6gEN4UJ2IMy8iameEAd96EPWcXkFSfCT1HUsO1ibJlDbsxvLR85UV/0";
         }
-        if(imageUrlId == null){
+        if (imageUrlId == null) {
             imageUrlId = "dfJGFGZoTP6IMsJrDUlc_A";
         }
         if (this._plaformIns) {
@@ -125,9 +125,9 @@ export class PlaformManager {
         let title = UIConst.DEFAULT_SHARE_TITLE;
         let imageUrl = "https://mmocgame.qpic.cn/wechatgame/XKGicIWicBF9pOt6gEN4UJ2IMy8iameEAd96EPWcXkFSfCT1HUsO1ibJlDbsxvLR85UV/0"; // TODO 默认的分享图片
         let imageUrlId = "dfJGFGZoTP6IMsJrDUlc_A";
-        // console.log("PlaformManager 被动转发");
+        // LogWrap.log("PlaformManager 被动转发");
         if (this._plaformIns) {
-            this._plaformIns.onShareAppMessage(title, imageUrl,imageUrlId);
+            this._plaformIns.onShareAppMessage(title, imageUrl, imageUrlId);
         }
     }
 
@@ -152,7 +152,7 @@ export class PlaformManager {
     /**
      * 创建游戏圈按钮
      */
-    public static createGameClubButton(){
+    public static createGameClubButton() {
         if (CC_WECHATGAME) {
             WXPlatform.createGameClubButton();
         }
@@ -161,8 +161,8 @@ export class PlaformManager {
     /**
      * 隐藏游戏圈
      */
-    public static hideGameClubButton():void{
-        if(CC_WECHATGAME){
+    public static hideGameClubButton(): void {
+        if (CC_WECHATGAME) {
             WXPlatform.hideGameClubButton();
         }
     }
@@ -170,10 +170,65 @@ export class PlaformManager {
     /**
      * 显示游戏圈
      */
-    public static showGameClubButton():void{
-        if(CC_WECHATGAME){
+    public static showGameClubButton(): void {
+        if (CC_WECHATGAME) {
             WXPlatform.showGameClubButton();
         }
     }
+
+    /**
+     * 初始化数据库
+     */
+    public intiDatabase() {
+        if (this._plaformIns) {
+            this._plaformIns.initDatabase();
+        }
+    }
+
+    /**
+     * 获取用户openId
+     */
+    public getOpenId(fun: Function) {
+        if (this._plaformIns) {
+            this._plaformIns.getOpenId(fun);
+        }
+    }
+
+    /**
+     * 上传用户游戏数据
+     */
+    public setUserInfo(openId): void {
+        if (this._plaformIns) {
+            this._plaformIns.setUserInfo(openId);
+        }
+    }
+
+    /**
+     * 更新用户游戏数据
+     */
+    public updateUserInfo() {
+        if (this._plaformIns) {
+            this._plaformIns.updateUserInfo();
+        }
+    }
+
+    /**
+     * 上传邀请者信息
+     */
+    public setShareInfo(inviteOpenId) {
+        if (this._plaformIns) {
+            this._plaformIns.setShareInfo(inviteOpenId);
+        }
+    }
+
+    /**
+     * 获取邀请到的好友数据
+     */
+    public getInviteInfo(callback){
+        if(this._plaformIns){
+            this._plaformIns.getInviteInfo(callback);
+        }
+    }
+
 
 }
